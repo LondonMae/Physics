@@ -52,6 +52,7 @@ public class Test : MonoBehaviour
         {
             Velocity();
             AngularVelocity();
+            VelocityUpdate();
         }
     }
 
@@ -69,6 +70,42 @@ public class Test : MonoBehaviour
         currRot = currController.transform.eulerAngles;
         angularVelocity = (currRot - prevRot) / Time.deltaTime;
         prevRot = currRot;
+    }
+
+    int frameStep = 0;
+    Vector3[] velocityFrames = new Vector3[5];
+    Vector3[] angularVelocityFrames = new Vector3[5];
+
+    //keeps track of 5 most recent frames 
+    public void VelocityUpdate()
+    {
+        if (velocityFrames != null)
+        {
+            frameStep++;
+        }
+
+        if (frameStep >= velocityFrames.Length)
+        {
+            frameStep = 0;
+        }
+
+        velocityFrames[frameStep] = velocity;
+        angularVelocityFrames[frameStep] = angularVelocity;
+    }
+
+    // get max velocity in last 5 frames (most likely what player intended)
+    public Vector3 GetVelocityPeak(Vector3[] vectors)
+    {
+        Vector3 max = vectors[0];
+        for (int i = 1; i < vectors.Length; i++)
+        {
+            if (vectors[i].magnitude > sum.magnitude)
+            {
+                max = vectors[i];
+            }
+        }
+
+        return max;
     }
 
     // get which hand the target is in
@@ -89,9 +126,12 @@ public class Test : MonoBehaviour
     // called when object is dropped
     public void Testing()
     {
-        GetComponent<Rigidbody>().velocity = velocity;
-        GetComponent<Rigidbody>().angularVelocity = angularVelocity;
+        GetComponent<Rigidbody>().velocity = GetVelocityPeak(velocityFrames);
+        GetComponent<Rigidbody>().angularVelocity = GetVelocityPeak(angularVelocityFrames);
         currController = null;
+        frameStep = 0;
+        velocityFrames = new Vector3[5];
+        angularVelocityFrames = new Vector3[5];
     }
 
     // get controllers;
