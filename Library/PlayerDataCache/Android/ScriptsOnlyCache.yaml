@@ -1,7 +1,8 @@
 ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp.dll:
-    - Test
+    - HitTarget
+    - ThrowBehavior
     Unity.InputSystem.dll:
     - UnityEngine.InputSystem.InputActionAsset
     - UnityEngine.InputSystem.InputActionReference
@@ -53,6 +54,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 54
       Script: {instanceID: 0}
+    - Class: 64
+      Script: {instanceID: 0}
     - Class: 65
       Script: {instanceID: 0}
     - Class: 81
@@ -85,11 +88,15 @@ ScriptsOnlyBuild:
       Script: {instanceID: 3758}
     - Class: 114
       Script: {instanceID: 4200}
+    - Class: 114
+      Script: {instanceID: 16604}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 120
       Script: {instanceID: 0}
     - Class: 135
+      Script: {instanceID: 0}
+    - Class: 136
       Script: {instanceID: 0}
     - Class: 157
       Script: {instanceID: 0}
@@ -224,12 +231,6 @@ ScriptsOnlyBuild:
     className: XRInteractorLineVisual
   - hash:
       serializedVersion: 2
-      Hash: 5a9fd98a7e7357781f851cd3177ba02c
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: Balloon_Room_Manager
-  - hash:
-      serializedVersion: 2
       Hash: 04156ad4f539d9ee82c2ea6a11b2e994
     assemblyName: Unity.XR.Interaction.Toolkit.dll
     namespaceName: UnityEngine.XR.Interaction.Toolkit
@@ -326,12 +327,6 @@ ScriptsOnlyBuild:
     className: XRTintInteractableVisual
   - hash:
       serializedVersion: 2
-      Hash: b46be6b6df78ed3a203966ecdf5fe32f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: VRRig
-  - hash:
-      serializedVersion: 2
       Hash: 6acf3484c87fc8fea2eb8bdddc84592d
     assemblyName: Unity.XR.Interaction.Toolkit.dll
     namespaceName: UnityEngine.XR.Interaction.Toolkit
@@ -342,12 +337,6 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: CanvasScaler
-  - hash:
-      serializedVersion: 2
-      Hash: c7faad5ded3055716c4bdef4ad735515
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: balloonMovement
   - hash:
       serializedVersion: 2
       Hash: cf9f5cf2c3145a37ac07f00e50e460f9
@@ -713,7 +702,7 @@ ScriptsOnlyBuild:
       Hash: cae0d293d2ab7cbdb9e1d66278b64e76
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
-    className: Test
+    className: ThrowBehavior
   - hash:
       serializedVersion: 2
       Hash: a5781dc71a671b1ad2b38de19f24b71f
@@ -828,12 +817,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TMP_Settings
-  - hash:
-      serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: PopBalloon
   - hash:
       serializedVersion: 2
       Hash: 3943f92ff673186617cda33896d415e6
@@ -954,6 +937,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.XR.Interaction.Toolkit.dll
     namespaceName: UnityEngine.XR.Interaction.Toolkit.UI
     className: XRUIInputModule
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: HitTarget
   platform: 13
   scenePathNames:
   - Assets/Scenes/test.unity

@@ -9,6 +9,7 @@ TagManager:
   - rightHand
   - Balloon
   - throwable
+  - Target
   layers:
   - Default
   - TransparentFX
