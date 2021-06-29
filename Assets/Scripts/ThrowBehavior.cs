@@ -1,3 +1,7 @@
+/* London Bielicke 
+ * 6/28/2021
+ * Throwing Experiment
+ */
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,21 +32,35 @@ public class ThrowBehavior : MonoBehaviour
     Vector3 currRot;
     Vector3 angularVelocity;
 
+    // game objects and components
+    Rigidbody rb;
+    public GameObject canvas;
+
 
     public void Start()
     {
         // INIT input devices 
         leftHand = detectDevices(leftHandCharacteristics);
         rightHand = detectDevices(rightHandCharacteristics);
+
+        // get throwable rigidbody
+        rb = this.GetComponent<Rigidbody>();
     }
 
     // called when onject is picked up by controller (gets correct hand)
     public void OnPickup()
     {
-        prevPos = transform.position;
-        prevRot = transform.eulerAngles;
+        // haptics
         whichHand();
         currInput.SendHapticImpulse(0, 0.3f, .2f);
+
+        // remove tutorial once player starts game
+        if (canvas != null)
+            Destroy(canvas);
+
+        // set prev position and rotation to current pos and rot
+        prevPos = transform.position;
+        prevRot = transform.eulerAngles;
     }
 
     // only calculate velocity if ball is in hand 
@@ -126,18 +144,26 @@ public class ThrowBehavior : MonoBehaviour
     // called when object is dropped
     public void OnRelease()
     {
-        Rigidbody rb = this.GetComponent<Rigidbody>();
+        // set ball velocity to controller velocity's peak
         rb.velocity = GetVelocityPeak(velocityFrames);
         rb.angularVelocity = GetVelocityPeak(angularVelocityFrames);
-        rb.isKinematic = false;
+
+        // vibration haptics
         currInput.SendHapticImpulse(0, 0.3f, .2f);
+
+        Reset();
+    }
+
+    // reset fields to re-calculate when trhown again
+    void Reset()
+    {
         currController = null;
         frameStep = 0;
         velocityFrames = new Vector3[5];
         angularVelocityFrames = new Vector3[5];
     }
 
-    // get controllers;
+    // get controllers
     private InputDevice detectDevices(InputDeviceCharacteristics handCharacteristics)
     {
         var controllers = new List<InputDevice>();
