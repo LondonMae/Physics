@@ -34,29 +34,31 @@ public class ThrowBehavior : MonoBehaviour
 
     // game objects and components
     Rigidbody rb;
-    public GameObject canvas;
-
 
     public void Start()
     {
         // INIT input devices 
-        leftHand = detectDevices(leftHandCharacteristics);
-        rightHand = detectDevices(rightHandCharacteristics);
+        try
+        {
+            leftHand = detectDevices(leftHandCharacteristics);
+            rightHand = detectDevices(rightHandCharacteristics);
+        }
+        catch (System.ArgumentOutOfRangeException e)
+        {
+            Debug.Log("Cannot detect controllers");
+            Debug.LogError(e);
+        }
 
         // get throwable rigidbody
         rb = this.GetComponent<Rigidbody>();
     }
 
-    // called when onject is picked up by controller (gets correct hand)
+    // called when object is picked up by controller (gets correct hand)
     public void OnPickup()
     {
         // haptics
         whichHand();
         currInput.SendHapticImpulse(0, 0.3f, .2f);
-
-        // remove tutorial once player starts game
-        if (canvas != null)
-            Destroy(canvas);
 
         // set prev position and rotation to current pos and rot
         prevPos = transform.position;
@@ -75,7 +77,7 @@ public class ThrowBehavior : MonoBehaviour
     }
 
     // tracks velocity
-    public void Velocity()
+    private void Velocity()
     {
         currPos = currController.transform.position;
         velocity = (currPos-prevPos)/Time.deltaTime;
@@ -83,7 +85,7 @@ public class ThrowBehavior : MonoBehaviour
     }
 
     // tracks angular velocity
-    public void AngularVelocity()
+    private void AngularVelocity()
     {
         currRot = currController.transform.eulerAngles;
         angularVelocity = (currRot - prevRot) / Time.deltaTime;
@@ -95,24 +97,20 @@ public class ThrowBehavior : MonoBehaviour
     Vector3[] angularVelocityFrames = new Vector3[5];
 
     //keeps track of 5 most recent frames 
-    public void VelocityUpdate()
+    private void VelocityUpdate()
     {
-        if (velocityFrames != null)
-        {
-            frameStep++;
-        }
-
-        if (frameStep >= velocityFrames.Length)
-        {
-            frameStep = 0;
-        }
-
+        // set current velocity frames
         velocityFrames[frameStep] = velocity;
         angularVelocityFrames[frameStep] = angularVelocity;
+
+        // step to next fram
+        frameStep++;
+        if (frameStep >= velocityFrames.Length)
+            frameStep = 0;
     }
 
     // get max velocity in last 5 frames (most likely what player intended)
-    public Vector3 GetVelocityPeak(Vector3[] vectors)
+    private Vector3 GetVelocityPeak(Vector3[] vectors)
     {
         Vector3 max = vectors[0];
         for (int i = 1; i < vectors.Length; i++)
@@ -127,14 +125,14 @@ public class ThrowBehavior : MonoBehaviour
     }
 
     // get which hand the target is in
-    public void whichHand()
+    private void whichHand()
     {
         if (rHand.selectTarget != null)
         {
             currInput = rightHand;
             currController = rHand;
         }
-        else
+        else 
         {
             currInput = leftHand;
             currController = lHand;
@@ -155,7 +153,7 @@ public class ThrowBehavior : MonoBehaviour
     }
 
     // reset fields to re-calculate when trhown again
-    void Reset()
+    private void Reset()
     {
         currController = null;
         frameStep = 0;
@@ -163,20 +161,12 @@ public class ThrowBehavior : MonoBehaviour
         angularVelocityFrames = new Vector3[5];
     }
 
-    // get controllers
+    // get controller
     private InputDevice detectDevices(InputDeviceCharacteristics handCharacteristics)
     {
         var controllers = new List<InputDevice>();
         InputDevices.GetDevicesWithCharacteristics(handCharacteristics, controllers);
-        if (controllers.Count > 0)
-        {
-            print("Left hand found");
-            return controllers[0];
-        }
-        else
-        {
-            return controllers[0];
-        }
+        return controllers[0];
     }
 
 }
