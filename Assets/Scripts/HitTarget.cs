@@ -6,46 +6,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Order
-{
-    // instantiate array
-    private int[] order;
-
-    // constructor 
-    public Order(int n, int mult)
-    {
-        order = new int[n * mult];
-        InitOrder(n); 
-    }
-
-    // init order of numbers 0-n repeated m times
-    void InitOrder(int n)
-    {
-        for (int i = 0; i < order.Length; i++)
-        {
-            order[i] = (i % n);
-        }
-    }
-
-    // Randomized initialized array
-    public void Randomize()
-    {
-        for (int i = order.Length - 1; i > 0; i--)
-        {
-            int j = Random.Range(0, i + 1);
-            int temp = order[i];
-            order[i] = order[j];
-            order[j] = temp;
-        }
-    }
-
-    // return order array
-    public int[] GetOrder()
-    {
-        return order;
-    } 
-}
-
 public class HitTarget : MonoBehaviour
 {
     // target prefab and possible positions
@@ -56,9 +16,8 @@ public class HitTarget : MonoBehaviour
     Rigidbody rb;
 
     // fields for randomizing target spawning
-    int[] orderList;
-    int rounds = 3;
-    int index = 0;
+    int[] randOrder;
+    public int rounds = 3;
     bool openTarget = false;
 
     public void Start()
@@ -69,7 +28,7 @@ public class HitTarget : MonoBehaviour
         // get randomized order
         Order order = new Order(positions.Length, rounds);
         order.Randomize();
-        orderList = order.GetOrder();
+        randOrder = order.GetOrder();
     } 
 
     /*
@@ -84,9 +43,11 @@ public class HitTarget : MonoBehaviour
         if (collision.gameObject.tag == "Target")
         {
             rb.isKinematic = true;
+            rb.isKinematic = false;
+
+            // allows for new target to spawn 
             Destroy(collision.gameObject);
             openTarget = false;
-            rb.isKinematic = false;
         }
         if (collision.gameObject.tag == "ground")
         {
@@ -95,22 +56,33 @@ public class HitTarget : MonoBehaviour
         }
     }
 
+    //index keeps track of targets spawned
+    int index = 0;
     public void Update()
     {
-        // if game still running, spawn new target
-        if (!openTarget && index < orderList.Length)
+        if (readyForNewTarget())
         {
-            Instantiate(target, positions[orderList[index]], target.transform.rotation);
+            //spawn new target
+            Instantiate(target, positions[randOrder[index]], target.transform.rotation);
             index++;
             openTarget = true;
         }
-        //if game is over, quit game
-        if (index >= orderList.Length && !openTarget)
+        if (gameIsOver())
         {
             Application.Quit();
         }
     }
 
-    
+    // if no target currently spawn AND more target to spawn
+    private bool readyForNewTarget()
+    {
+        return !openTarget && index < randOrder.Length;
+    }
+
+    // if all targets already spawned and last target was hit
+    private bool gameIsOver()
+    {
+        return index >= randOrder.Length && !openTarget;
+    }
 
 }

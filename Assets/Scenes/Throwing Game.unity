@@ -940,7 +940,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rHand: {fileID: 756970541}
   lHand: {fileID: 628660031}
-  canvas: {fileID: 1979571670}
 --- !u!114 &656451867
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -954,6 +953,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 6745258915668090405, guid: 74142e499f33b744687405186c22331c, type: 3}
+  rounds: 3
 --- !u!1 &681946649
 GameObject:
   m_ObjectHideFlags: 0
@@ -1891,6 +1891,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startButton: {fileID: 1877489921}
   textBox: {fileID: 1439330880}
+  initCanvas: {fileID: 1979571670}
+  ball: {fileID: 656451859}
   wait: 5
   textValues:
   - Your task is to throw the ball at the upcoming targets
@@ -1898,7 +1900,6 @@ MonoBehaviour:
   - if you need a new ball, click the button behind you
   - the game will end automatically once you complete the task
   - begin whenever you are ready
-  ball: {fileID: 656451859}
 --- !u!1 &1071954781
 GameObject:
   m_ObjectHideFlags: 0
