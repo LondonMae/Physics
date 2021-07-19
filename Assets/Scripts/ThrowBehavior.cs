@@ -35,6 +35,9 @@ public class ThrowBehavior : MonoBehaviour
     // game objects and components
     Rigidbody rb;
 
+    // Sets velocity coefficient
+    public float velocityCoefficient = 1f;
+
     public void Start()
     {
         // INIT input devices 
@@ -51,6 +54,9 @@ public class ThrowBehavior : MonoBehaviour
 
         // get throwable rigidbody
         rb = this.GetComponent<Rigidbody>();
+
+        // set velocity coefficient from persistent manager (take this out for re-use)
+        velocityCoefficient = PersistentManager.Instance.velocityCoef;
     }
 
     // called when object is picked up by controller (gets correct hand)
@@ -63,6 +69,7 @@ public class ThrowBehavior : MonoBehaviour
         // set prev position and rotation to current pos and rot
         prevPos = transform.position;
         prevRot = transform.eulerAngles;
+
     }
 
     // only calculate velocity if ball is in hand 
@@ -143,8 +150,8 @@ public class ThrowBehavior : MonoBehaviour
     public void OnRelease()
     {
         // set ball velocity to controller velocity's peak
-        rb.velocity = GetVelocityPeak(velocityFrames);
-        rb.angularVelocity = GetVelocityPeak(angularVelocityFrames);
+        rb.velocity = GetVelocityPeak(velocityFrames) * velocityCoefficient;
+        rb.angularVelocity = GetVelocityPeak(angularVelocityFrames) * velocityCoefficient;
 
         // vibration haptics
         currInput.SendHapticImpulse(0, 0.3f, .2f);

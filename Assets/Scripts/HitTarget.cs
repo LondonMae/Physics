@@ -10,7 +10,8 @@ public class HitTarget : MonoBehaviour
 {
     // target prefab and possible positions
     public GameObject target; 
-    Vector3[] positions = new Vector3[] { new Vector3(0, .6f, 1), new Vector3(0, .6f, 3), new Vector3(0, .6f, 5), new Vector3(0, .6f, 8) };
+    Vector3[] positions = new Vector3[] { new Vector3(0, .5f, 3), new Vector3(0, .5f, 4), new Vector3(0, .5f, 5), 
+                                            new Vector3(0, .5f, 6), new Vector3(0, .5f, 7) };
 
     //ball rigid body
     Rigidbody rb;
@@ -18,7 +19,11 @@ public class HitTarget : MonoBehaviour
     // fields for randomizing target spawning
     int[] randOrder;
     public int rounds = 3;
-    bool openTarget = false;
+    Vector3 spawnPos;
+
+    //index keeps track of targets spawned
+    int index = 1;
+    bool hit = false;
 
     public void Start()
     {
@@ -26,63 +31,66 @@ public class HitTarget : MonoBehaviour
         rb = this.GetComponent<Rigidbody>();
 
         // get randomized order
-        Order order = new Order(positions.Length, rounds);
+        Order order = new Order(positions.Length, 10);
         order.Randomize();
         randOrder = order.GetOrder();
-    } 
+
+        Instantiate(target, positions[randOrder[0]], target.transform.rotation);
+        spawnPos = this.transform.position;
+    }
 
     /*
-     * if hits target, allow for continued play
-     * upon hitting anything set to kinematic 
-     * and then return back so that the ball
-     * can move when thrown but does not roll into 
-     * the targets upon hitting the ground
+     * throw is detected whether player
+     * hits target or not. on collision 
+     * with either a target or the gorund, 
+     * reset the position of the ball, and
+     * spawn the next target to hit 
      */
-    void OnCollisionEnter(Collision collision)
+    IEnumerator OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.tag == "Target")
+        // *** also if not already collided without being grabbed again ***
+        if ((other.tag == "Target" || other.tag == "ground") && !hit)
         {
-            rb.isKinematic = true;
-            rb.isKinematic = false;
+            hit = true;
 
-            // allows for new target to spawn 
-            Destroy(collision.gameObject);
-            openTarget = false;
-        }
-        if (collision.gameObject.tag == "ground")
-        {
-            rb.isKinematic = true;
-            rb.isKinematic = false;
+            // debugging
+            Debug.Log("index: " + index);
+            Debug.Log(other.tag);
+
+            yield return null;
+            ResetGameObject();
+            NextTarget();
+            CheckEndOfScene();
+
+            hit = false;
         }
     }
 
-    //index keeps track of targets spawned
-    int index = 0;
-    public void Update()
+    // prevents ball from rolling and colliding more than once
+    private void ResetGameObject()
     {
-        if (readyForNewTarget())
+        rb.isKinematic = true;
+        this.transform.position = spawnPos;
+        rb.isKinematic = false;
+    }
+
+    // despawn and respawn in order
+    private void NextTarget()
+    {
+        Destroy(GameObject.FindWithTag("Target"));
+        if (index < randOrder.Length)
         {
-            //spawn new target
             Instantiate(target, positions[randOrder[index]], target.transform.rotation);
             index++;
-            openTarget = true;
         }
-        if (gameIsOver())
+    }
+
+    // checks if user completed task
+    private void CheckEndOfScene()
+    {
+        if (index >= randOrder.Length)
         {
-            Application.Quit();
+            PersistentManager.Instance.SceneCompleted = true;
         }
     }
-
-    // if no target currently spawn AND more target to spawn
-    private bool readyForNewTarget()
-    {
-        return !openTarget && index < randOrder.Length;
-    }
-
-    // if all targets already spawned and last target was hit
-    private bool gameIsOver()
-    {
-        return index >= randOrder.Length && !openTarget;
-    }
-
 }
