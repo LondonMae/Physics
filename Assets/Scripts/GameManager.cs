@@ -23,14 +23,14 @@ public class GameManager : MonoBehaviour
     float time;
     public string[] textValues = new string[] { "Your task is to throw the ball at the upcoming targets", "Once you hit a target, a new target will appear", "if you need a new ball, click the button in the corner", "the game will end automatically once it is over", "begin whenever you are ready" };
     int index = 1;
-    bool pressed = false;
+    bool startButtonHit = false;
     private int currScene;
 
     // Start is called before the first frame update
     void Start()
     {
         // access which set player is on
-        currScene = PersistentManager.Instance.currScene;
+        currScene = PersistentManager.Instance.GetCurrScene();
 
         // get textbox for instructions
         textUI = textBox.GetComponent<Text>();
@@ -53,15 +53,23 @@ public class GameManager : MonoBehaviour
     // Ready: begin scene and instructions
     public void Ready()
     {
+        /* if current block is not first,
+         * then do not display instructions, 
+         * but start the game 
+         */
         if (currScene > 0)
         {
             Time.timeScale = 1;
+
             Destroy(initCanvas);
-            pressed = false;
+            startButtonHit = false;
         }
+        /*
+         * otherwise, run instructions
+         */
         else
         {
-            pressed = true;
+            startButtonHit = true;
             textUI.text = textValues[0];
 
             Time.timeScale = 1;
@@ -73,7 +81,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (pressed)
+        if (startButtonHit)
         {
             RotateInstructions();
         }
@@ -96,7 +104,7 @@ public class GameManager : MonoBehaviour
         else if (instructionsDone || ballGrabbed)
         {
             Destroy(initCanvas);
-            pressed = false;
+            startButtonHit = false;
         }
         time -= Time.deltaTime;
     }

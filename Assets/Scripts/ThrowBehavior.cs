@@ -56,7 +56,7 @@ public class ThrowBehavior : MonoBehaviour
         rb = this.GetComponent<Rigidbody>();
 
         // set velocity coefficient from persistent manager (take this out for re-use)
-        velocityCoefficient = PersistentManager.Instance.velocityCoef;
+        velocityCoefficient = PersistentManager.Instance.GetVelocityCoef();
     }
 
     // called when object is picked up by controller (gets correct hand)

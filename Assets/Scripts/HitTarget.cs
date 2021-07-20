@@ -2,15 +2,18 @@
  * 6/28/2021
  * Throwing Experiment
  */
+using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class HitTarget : MonoBehaviour
 {
     // target prefab and possible positions
     public GameObject target; 
-    Vector3[] positions = new Vector3[] { new Vector3(0, .5f, 3), new Vector3(0, .5f, 4), new Vector3(0, .5f, 5), 
+    public Vector3[] positions = new Vector3[] { new Vector3(0, .5f, 3), new Vector3(0, .5f, 4), new Vector3(0, .5f, 5), 
                                             new Vector3(0, .5f, 6), new Vector3(0, .5f, 7) };
 
     //ball rigid body
@@ -18,12 +21,15 @@ public class HitTarget : MonoBehaviour
 
     // fields for randomizing target spawning
     int[] randOrder;
-    public int rounds = 3;
+    public int rounds = 10;
     Vector3 spawnPos;
 
     //index keeps track of targets spawned
     int index = 1;
     bool hit = false;
+
+    // for data collection
+    StreamWriter writer;
 
     public void Start()
     {
@@ -31,12 +37,16 @@ public class HitTarget : MonoBehaviour
         rb = this.GetComponent<Rigidbody>();
 
         // get randomized order
-        Order order = new Order(positions.Length, 10);
+        Order order = new Order(positions.Length, rounds);
         order.Randomize();
         randOrder = order.GetOrder();
 
         Instantiate(target, positions[randOrder[0]], target.transform.rotation);
         spawnPos = this.transform.position;
+
+        // string fileName = Application.persistentDataPath + "/" + "throwingData.csv";
+        string fileName = "throwingData.csv";
+        writer = new StreamWriter(fileName, true);
     }
 
     /*
@@ -53,17 +63,45 @@ public class HitTarget : MonoBehaviour
         {
             hit = true;
 
-            // debugging
-            Debug.Log("index: " + index);
-            Debug.Log(other.tag);
-
             yield return null;
+
+            WriteData();
             ResetGameObject();
             NextTarget();
             CheckEndOfScene();
 
             hit = false;
         }
+    }
+
+    /*
+     Example trial data:
+         targetPosition, ballPosition, displacement, whichScene, velocityCoefficient
+         6f,             5.7f,         .3f,          0,          1
+    */
+    private void WriteData()
+    {
+        Vector3 targetPos = GameObject.FindWithTag("Target").transform.position;
+        Vector3 ballPos = this.transform.position;
+        targetPos.y = 0;
+        ballPos.y = 0;
+
+        // Log in console
+        Debug.Log(targetPos);
+        Debug.Log(ballPos);
+
+        var vectorToTarget = ballPos - targetPos;
+        var distanceToTarget = vectorToTarget.magnitude;
+
+        int currBlock = PersistentManager.Instance.GetCurrScene();
+        float velocityCoefficient = PersistentManager.Instance.GetVelocityCoef();
+
+        // Log in file
+        string serializedData = targetPos + "," +
+                                ballPos + "," +
+                                distanceToTarget + "," + 
+                                currBlock + "," + velocityCoefficient + "\n";
+        writer.Write(serializedData);
     }
 
     // prevents ball from rolling and colliding more than once
@@ -91,6 +129,7 @@ public class HitTarget : MonoBehaviour
         if (index >= randOrder.Length)
         {
             PersistentManager.Instance.SceneCompleted = true;
+            writer.Close();
         }
     }
 }
