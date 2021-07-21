@@ -2,23 +2,34 @@
  * 6/28/2021
  * Throwing Experiment
  */
+using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class HitTarget : MonoBehaviour
 {
     // target prefab and possible positions
     public GameObject target; 
-    Vector3[] positions = new Vector3[] { new Vector3(0, .6f, 1), new Vector3(0, .6f, 3), new Vector3(0, .6f, 5), new Vector3(0, .6f, 8) };
+    public Vector3[] positions = new Vector3[] { new Vector3(0, .5f, 3), new Vector3(0, .5f, 4), new Vector3(0, .5f, 5), 
+                                            new Vector3(0, .5f, 6), new Vector3(0, .5f, 7) };
 
     //ball rigid body
     Rigidbody rb;
 
     // fields for randomizing target spawning
     int[] randOrder;
-    public int rounds = 3;
-    bool openTarget = false;
+    public int rounds = 10;
+    Vector3 spawnPos;
+
+    //index keeps track of targets spawned
+    int index = 1;
+    bool hit = false;
+
+    // for data collection
+    StreamWriter writer;
 
     public void Start()
     {
@@ -29,60 +40,96 @@ public class HitTarget : MonoBehaviour
         Order order = new Order(positions.Length, rounds);
         order.Randomize();
         randOrder = order.GetOrder();
-    } 
+
+        Instantiate(target, positions[randOrder[0]], target.transform.rotation);
+        spawnPos = this.transform.position;
+
+        // string fileName = Application.persistentDataPath + "/" + "throwingData.csv";
+        string fileName = "throwingData.csv";
+        writer = new StreamWriter(fileName, true);
+    }
 
     /*
-     * if hits target, allow for continued play
-     * upon hitting anything set to kinematic 
-     * and then return back so that the ball
-     * can move when thrown but does not roll into 
-     * the targets upon hitting the ground
+     * throw is detected whether player
+     * hits target or not. on collision 
+     * with either a target or the gorund, 
+     * reset the position of the ball, and
+     * spawn the next target to hit 
      */
-    void OnCollisionEnter(Collision collision)
+    IEnumerator OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.tag == "Target")
+        // *** also if not already collided without being grabbed again ***
+        if ((other.tag == "Target" || other.tag == "ground") && !hit)
         {
-            rb.isKinematic = true;
-            rb.isKinematic = false;
+            hit = true;
 
-            // allows for new target to spawn 
-            Destroy(collision.gameObject);
-            openTarget = false;
-        }
-        if (collision.gameObject.tag == "ground")
-        {
-            rb.isKinematic = true;
-            rb.isKinematic = false;
+            yield return null;
+
+            WriteData();
+            ResetGameObject();
+            NextTarget();
+            CheckEndOfScene();
+
+            hit = false;
         }
     }
 
-    //index keeps track of targets spawned
-    int index = 0;
-    public void Update()
+    /*
+     Example trial data:
+         targetPosition, ballPosition, displacement, whichScene, velocityCoefficient
+         6f,             5.7f,         .3f,          0,          1
+    */
+    private void WriteData()
     {
-        if (readyForNewTarget())
+        Vector3 targetPos = GameObject.FindWithTag("Target").transform.position;
+        Vector3 ballPos = this.transform.position;
+        targetPos.y = 0;
+        ballPos.y = 0;
+
+        // Log in console
+        Debug.Log(targetPos);
+        Debug.Log(ballPos);
+
+        var vectorToTarget = ballPos - targetPos;
+        var distanceToTarget = vectorToTarget.magnitude;
+
+        int currBlock = PersistentManager.Instance.GetCurrScene();
+        float velocityCoefficient = PersistentManager.Instance.GetVelocityCoef();
+
+        // Log in file
+        string serializedData = targetPos + "," +
+                                ballPos + "," +
+                                distanceToTarget + "," + 
+                                currBlock + "," + velocityCoefficient + "\n";
+        writer.Write(serializedData);
+    }
+
+    // prevents ball from rolling and colliding more than once
+    private void ResetGameObject()
+    {
+        rb.isKinematic = true;
+        this.transform.position = spawnPos;
+        rb.isKinematic = false;
+    }
+
+    // despawn and respawn in order
+    private void NextTarget()
+    {
+        Destroy(GameObject.FindWithTag("Target"));
+        if (index < randOrder.Length)
         {
-            //spawn new target
             Instantiate(target, positions[randOrder[index]], target.transform.rotation);
             index++;
-            openTarget = true;
         }
-        if (gameIsOver())
+    }
+
+    // checks if user completed task
+    private void CheckEndOfScene()
+    {
+        if (index >= randOrder.Length)
         {
-            Application.Quit();
+            PersistentManager.Instance.SceneCompleted = true;
+            writer.Close();
         }
     }
-
-    // if no target currently spawn AND more target to spawn
-    private bool readyForNewTarget()
-    {
-        return !openTarget && index < randOrder.Length;
-    }
-
-    // if all targets already spawned and last target was hit
-    private bool gameIsOver()
-    {
-        return index >= randOrder.Length && !openTarget;
-    }
-
 }
