@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
 
         // get textbox for instructions
         textUI = textBox.GetComponent<Text>();
-        textUI.text = "Are you ready to begin round " + (currScene + 1) + "?";
+        textUI.text = "Ready for scene " + (currScene + 1) + "?";
 
         // game not playable during instructions
         Time.timeScale = 0;

@@ -13,8 +13,7 @@ public class HitTarget : MonoBehaviour
 {
     // target prefab and possible positions
     public GameObject target; 
-    public Vector3[] positions = new Vector3[] { new Vector3(0, .5f, 3), new Vector3(0, .5f, 4), new Vector3(0, .5f, 5), 
-                                            new Vector3(0, .5f, 6), new Vector3(0, .5f, 7) };
+    public Vector3[] positions = new Vector3[] { new Vector3(0, .5f, 3), new Vector3(0, .5f, 4), new Vector3(0, .5f, 5)};
 
     //ball rigid body
     Rigidbody rb;
@@ -25,7 +24,7 @@ public class HitTarget : MonoBehaviour
     Vector3 spawnPos;
 
     //index keeps track of targets spawned
-    int index = 1;
+    int index = 0;
     bool hit = false;
 
     // for data collection
@@ -41,11 +40,11 @@ public class HitTarget : MonoBehaviour
         order.Randomize();
         randOrder = order.GetOrder();
 
-        Instantiate(target, positions[randOrder[0]], target.transform.rotation);
+        Instantiate(target, positions[randOrder[index]], target.transform.rotation);
         spawnPos = this.transform.position;
 
         // string fileName = Application.persistentDataPath + "/" + "throwingData.csv";
-        string fileName = "throwingData.csv";
+        string fileName = Application.persistentDataPath + "/" + "throwingData.csv";
         writer = new StreamWriter(fileName, true);
     }
 
@@ -76,8 +75,8 @@ public class HitTarget : MonoBehaviour
 
     /*
      Example trial data:
-         targetPosition, ballPosition, displacement, whichScene, velocityCoefficient
-         6f,             5.7f,         .3f,          0,          1
+         targetPosition, ballPosition, displacement, whichScene, velocityCoefficient, throw number
+         6f,             5.7f,         .3f,          0,          1,                   30
     */
     private void WriteData()
     {
@@ -100,7 +99,9 @@ public class HitTarget : MonoBehaviour
         string serializedData = targetPos + "," +
                                 ballPos + "," +
                                 distanceToTarget + "," + 
-                                currBlock + "," + velocityCoefficient + "\n";
+                                currBlock + "," + 
+                                velocityCoefficient + "," +
+                                (index+1) + "\n";
         writer.Write(serializedData);
     }
 
@@ -115,11 +116,12 @@ public class HitTarget : MonoBehaviour
     // despawn and respawn in order
     private void NextTarget()
     {
-        Destroy(GameObject.FindWithTag("Target"));
+        index++;
         if (index < randOrder.Length)
         {
+            Destroy(GameObject.FindWithTag("Target"));
+            Debug.Log(index);
             Instantiate(target, positions[randOrder[index]], target.transform.rotation);
-            index++;
         }
     }
 
