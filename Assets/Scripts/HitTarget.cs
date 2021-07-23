@@ -37,7 +37,6 @@ public class HitTarget : MonoBehaviour
 
         // get randomized order
         Order order = new Order(positions.Length, rounds);
-        order.Randomize();
         randOrder = order.GetOrder();
 
         Instantiate(target, positions[randOrder[index]], target.transform.rotation);

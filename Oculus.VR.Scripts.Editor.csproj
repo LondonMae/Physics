@@ -36,11 +36,11 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\Oculus\VR\Scripts\Editor\OVRCustomSkeletonEditor.cs" />
+     <Compile Include="Assets\Oculus\VR\Scripts\Editor\OVRProjectConfigEditor.cs" />
      <Compile Include="Assets\Oculus\VR\Scripts\Editor\OVREditorUtil.cs" />
      <Compile Include="Assets\Oculus\VR\Scripts\Editor\OVROverlayEditor.cs" />
      <Compile Include="Assets\Oculus\VR\Scripts\Editor\OVRManagerEditor.cs" />
-     <Compile Include="Assets\Oculus\VR\Scripts\Editor\OVRCustomSkeletonEditor.cs" />
-     <Compile Include="Assets\Oculus\VR\Scripts\Editor\OVRProjectConfigEditor.cs" />
      <None Include="Assets\Oculus\VR\Scripts\Editor\Oculus.VR.Scripts.Editor.asmdef" />
      <None Include="Assets\Oculus\VR\Scripts\Editor\OVROverlaySrcRectEditor.shader" />
      <None Include="Assets\Oculus\VR\Scripts\Editor\OVROverlayDestRectEditor.shader" />

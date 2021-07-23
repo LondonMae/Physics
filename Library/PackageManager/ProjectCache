@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637624735183803696
-    m_Hash: 1792543612
+      ticks: 637626472024824921
+    m_Hash: 3989139471
   m_LockFileStatus:
     m_FilePath: C:/Users/19014/Documents/london_code/Physics/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637624735348206504
-    m_Hash: 60496308
+      ticks: 637626472024824921
+    m_Hash: 530130492
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_PackageAssets:
@@ -62,6 +62,8 @@ m_PackageAssets:
         - 1.3.9
         - 1.4.9
         - 1.5.7
+        - 1.6.0
+        - 1.7.1
         - 2.0.0-preview.6
         - 2.0.0-preview.8
         - 2.0.0-preview.15
@@ -74,6 +76,7 @@ m_PackageAssets:
         - 2.1.0-preview.6
         compatible:
         - 1.5.7
+        - 1.6.0
         - 2.0.0-preview.6
         - 2.0.0-preview.8
         - 2.0.0-preview.15
@@ -1013,12 +1016,16 @@ m_PackageAssets:
         - 4.0.3
         - 4.0.5
         - 4.0.6
+        - 4.0.7
+        - 4.1.0-pre.1
         compatible:
         - 4.0.1
         - 4.0.3
         - 4.0.5
         - 4.0.6
-        verified: 4.0.6
+        - 4.0.7
+        - 4.1.0-pre.1
+        verified: 4.0.7
       dependencies:
       - name: com.unity.modules.subsystems
         version: 1.0.0
@@ -1134,9 +1141,11 @@ m_PackageAssets:
         - 1.9.0
         - 1.9.1
         - 1.10.0-preview.1
+        - 1.10.0-preview.2
         compatible:
         - 1.9.1
         - 1.10.0-preview.1
+        - 1.10.0-preview.2
         verified: 1.9.1
       dependencies:
       - name: com.unity.xr.management
@@ -2983,9 +2992,11 @@ m_PackageAssets:
         - 2.1.4
         - 2.1.6
         - 2.1.7
+        - 2.1.8
         compatible:
         - 2.1.7
-        verified: 2.1.7
+        - 2.1.8
+        verified: 2.1.8
       dependencies:
       - name: com.unity.modules.vr
         version: 1.0.0
