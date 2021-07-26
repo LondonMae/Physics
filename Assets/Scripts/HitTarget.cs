@@ -13,7 +13,7 @@ public class HitTarget : MonoBehaviour
 {
     // target prefab and possible positions
     public GameObject target; 
-    public Vector3[] positions = new Vector3[] { new Vector3(0, .5f, 3), new Vector3(0, .5f, 4), new Vector3(0, .5f, 5)};
+    public Vector3[] positions = new Vector3[] { new Vector3(0, .51f, 3), new Vector3(0, .51f, 4), new Vector3(0, .51f, 5)};
 
     //ball rigid body
     Rigidbody rb;
