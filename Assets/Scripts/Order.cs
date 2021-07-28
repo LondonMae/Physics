@@ -15,7 +15,7 @@ public class Order
     {
         order = new int[n * mult];
         InitOrder(n);
-        Randomize(order.Length);
+        Randomize(order.Length, n);
     }
 
     // init order of numbers 0-n repeated m times
@@ -28,11 +28,11 @@ public class Order
     }
 
     // randomize initialized array by dividing into sections
-    public void Randomize(int n)
+    public void Randomize(int n, int sub)
     {
-        for (int i = 0; i < n; i+=3)
+        for (int i = 0; i < n; i+=sub)
         {
-            RandomizeSection(i,i+3);
+            RandomizeSection(i,i+sub);
         }
     }
 

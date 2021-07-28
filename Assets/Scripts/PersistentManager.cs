@@ -45,11 +45,11 @@ public class PersistentManager : MonoBehaviour
         float probability = Random.value;
         if (probability <= .5f)
         {
-            return new float[] { 1f, .8f, 1f, 1.25f, 1f };
+            return new float[] { 1f, .8f, 1f, 1.2f, 1f };
         }
         else
         {
-            return new float[] { 1f, 1.25f, 1f, .8f, 1f };
+            return new float[] { 1f, 1.2f, 1f, .8f, 1f };
         }
     }
 
